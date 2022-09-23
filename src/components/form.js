@@ -1,4 +1,29 @@
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import certificate_abi from "../smart_contract/Certificate_abi.json";
+
 function Form() {
+  let certificateInfo;
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const certificate_contract = new ethers.Contract(
+    "0xe4fF99300fd6Bb327Df241B5eBD28C3E83814e58",
+    certificate_abi,
+    provider
+  );
+  let cert_id = 0;
+  const getCertificateByID = async () => {
+   
+   certificateInfo = await certificate_contract.get_cert_by_id(cert_id);
+
+    // alert(certificateInfoOfReceiver);
+    console.log(certificateInfo);
+    alert(certificateInfo[0] + " Issuer: " + certificateInfo[2] + " Receiver: " + certificateInfo[3]);
+  };
+
+  function setCertID({target}) {
+    cert_id = target.value;
+  }
+
     return (
       <>
         
@@ -104,7 +129,6 @@ function Form() {
               </div>
             </div>
             <div className="mt-5 md:mt-0 md:col-span-2">
-              <form action="#" method="POST">
                 <div className="shadow overflow-hidden sm:rounded-md">
                   <div className="border-2 border-pink-500 px-4 py-5 bg-zinc-800 sm:p-6">
                     <div className="grid grid-cols-6 gap-6">
@@ -118,17 +142,17 @@ function Form() {
                         </label>
                         <input
                           type="text"
-                          name="street-address"
-                          id="street-address"
-                          autoComplete="street-address"
+                          name="web3-address"
+                          autoComplete=""
                           className="mt-1 focus:border-pink-500 block w-full shadow-sm sm:text-sm border-2 border-pink-400 rounded-md h-12"
+                          onChange={setCertID}
                           />
                       
   
                       
                    <div className="px-4 py-3  text-right sm:px-6">
                     <button
-                      type="submit"
+                      onClick={getCertificateByID}
                       className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gradient-to-r from-red-500 to-pink-500 to-purple-800 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
                       Retrieve from Blockchain
@@ -139,7 +163,6 @@ function Form() {
                   </div>
                  
                 </div>
-              </form>
             </div>
           </div>
         </div>
